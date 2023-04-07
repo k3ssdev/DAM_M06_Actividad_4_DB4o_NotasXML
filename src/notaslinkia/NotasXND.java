@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import javax.xml.transform.OutputKeys;
 
+import org.exist.dom.ContextItem;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xmldb.api.DatabaseManager;
@@ -117,8 +118,8 @@ public class NotasXND {
         System.out.print("\033[32mIntroduzca el ID del profesor:\033[0m ");
         String idModulo = sc.nextLine();
         System.out.println();
-        // Comprobamos si existe el módulo
-        if (existeModulo(idModulo)) {
+        // Comprobamos si existe el profesor
+        if (existeProfesor(Integer.parseInt(idModulo))) {
             // Creamos la consulta
             String consulta = "update delete //profesores/profesor[id='" + idModulo + "']";
             // Ejecutamos la consulta
@@ -135,9 +136,9 @@ public class NotasXND {
         }
     }
 
-    private boolean existeProfesor(String nomUser) {
+    private boolean existeProfesor(String contrasenaAlumno) {
         try {
-            String consulta = "for $t in //Profesores/Profesor where $t/NomUser='" + nomUser + "' return $t";
+            String consulta = "for $t in //profesores/profesor where $t/nom_user='" + contrasenaAlumno + "' return $t";
             ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
             return resultado.getSize() > 0;
         } catch (XMLDBException e) {
@@ -146,19 +147,25 @@ public class NotasXND {
         }
     }
 
-    private boolean existeProfesor(Profesor miProfesor) throws XMLDBException {
-        String consulta = "for $t in //Libros/Libro/Titulo where $t='" + miProfesor.getNomUser() + "' return $t";
-        ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
-        return resultado.getSize() > 0;
+    private boolean existeProfesor(int id) {
+        try {
+            String consulta = "for $t in //profesores/profesor where $t/id='" + id + "' return $t";
+            ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
+            return resultado.getSize() > 0;
+        } catch (XMLDBException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
+    
 
     public void modificarProfesor(Profesor miProfesor) throws XMLDBException {
         // Deberíamos verificar antes que el libro existe
-        String consulta = "update replace /Profesores/Profesor[NomUser='" + miProfesor.getNomUser() + "']/Nombre "
-                + "with <Nombre>" + miProfesor.getNombre() + "</Nombre>";
+        String consulta = "update replace /profesores/profesor[nom_user='" + miProfesor.getNomUser() + "']/nombre "
+                + "with <nombre>" + miProfesor.getNombre() + "</nombre>";
         ejecutarConsultaUpdate(colecNotas, consulta);
-        consulta = "update replace /Profesores/Profesor[NomUser='" + miProfesor.getNomUser() + "']/Password "
-                + "with <Password>" + miProfesor.getPassword() + "</Password>";
+        consulta = "update replace /profesores/profesor[nom_user='" + miProfesor.getNomUser() + "']/password "
+                + "with <password>" + miProfesor.getPassword() + "</password>";
         ejecutarConsultaUpdate(colecNotas, consulta);
     }
 
@@ -692,7 +699,7 @@ public class NotasXND {
         // queda el valor anterior
         System.out.print("\033[32mIntroduce el id del profesor a modificar: \033[0m");
         String idAlumno = sc.nextLine();
-        if (existeAlumno(idAlumno)) {
+        if (existeProfesor(Integer.parseInt(idAlumno))) {
             System.out.println("\033[32m(Si se deja en blanco, se queda el valor anterior)\033[0m");
             System.out.println();
             System.out.print("\033[32mIntroduce el nombre del profesor: \033[0m");
@@ -869,6 +876,25 @@ public class NotasXND {
                     n.getIdAlumno(), n.getIdModulo(), n.getIdAlumno(), n.getNota());
 
             System.out.println("+-------+-----------------+-----------------+-----------------+");
+        }
+    }
+
+    public void insertarProfesor(int id, String nombre, String user, String password) {
+     
+        // Comprobamos si existe el alumno
+        if (!existeProfesor(id)) {
+            // Creamos la consulta
+            String consulta = "update insert <profesor><id>" + id + "</id><nombre>" + nombre
+                    + "</nombre><nom_user>" + user + "</nom_user><password>" + password
+                    + "</password></profesor> into //profesores";
+            // Ejecutamos la consulta
+            try {
+                ejecutarConsultaUpdate(colecNotas, consulta);
+            } catch (XMLDBException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("El profesor ya existe");
         }
     }
 

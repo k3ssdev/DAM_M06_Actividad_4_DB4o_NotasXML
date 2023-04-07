@@ -40,6 +40,9 @@ public class TestXND {
         NotasXND gestor = new NotasXND();
         HistorialXND historial = new HistorialXND();
 
+        // Inserta profesores en la bbdd
+        gestor.insertarProfesor(0, "admin", "admin", "admin");
+
         // Crear un objeto Profesor para almacenar el usuario logueado
         Profesor profesor = null;
 
