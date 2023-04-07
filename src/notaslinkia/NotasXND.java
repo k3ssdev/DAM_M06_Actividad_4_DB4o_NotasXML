@@ -109,31 +109,31 @@ public class NotasXND {
     }
 
     public void eliminarProfesor() throws XMLDBException {
-               // Limpiamos la pantalla
-               System.out.print("\033[H\033[2J");
-               imprimirProfesores(listarProfesores());
-               System.out.println();
-               // Solicitamos los datos del módulo, color verde
-               System.out.print("\033[32mIntroduzca el ID del profesor:\033[0m ");
-               String idModulo = sc.nextLine();
-               System.out.println();
-               // Comprobamos si existe el módulo
-               if (existeModulo(idModulo)) {
-                   // Creamos la consulta
-                   String consulta = "update delete //profesores/profesor[id='" + idModulo + "']";
-                   // Ejecutamos la consulta
-                   try {
-                       ejecutarConsultaUpdate(colecNotas, consulta);
-                   } catch (XMLDBException e) {
-                       e.printStackTrace();
-                   }
-               } else {
-                   // Si existe un módulo con el mismo id, mostramos un mensaje de error en rojo
-                   System.out.println("\033[31m¡No existe profesor con el id " + idModulo + "!\033[0m");
-                   System.out.println();
-                   pausa();
-               }
-           }
+        // Limpiamos la pantalla
+        System.out.print("\033[H\033[2J");
+        imprimirProfesores(listarProfesores());
+        System.out.println();
+        // Solicitamos los datos del módulo, color verde
+        System.out.print("\033[32mIntroduzca el ID del profesor:\033[0m ");
+        String idModulo = sc.nextLine();
+        System.out.println();
+        // Comprobamos si existe el módulo
+        if (existeModulo(idModulo)) {
+            // Creamos la consulta
+            String consulta = "update delete //profesores/profesor[id='" + idModulo + "']";
+            // Ejecutamos la consulta
+            try {
+                ejecutarConsultaUpdate(colecNotas, consulta);
+            } catch (XMLDBException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Si existe un módulo con el mismo id, mostramos un mensaje de error en rojo
+            System.out.println("\033[31m¡No existe profesor con el id " + idModulo + "!\033[0m");
+            System.out.println();
+            pausa();
+        }
+    }
 
     private boolean existeProfesor(String nomUser) {
         try {
@@ -683,18 +683,6 @@ public class NotasXND {
         pausa();
     }
 
-    public void listarNotasPorAlumno(int i) {
-    }
-
-    public void insertarNota() {
-    }
-
-    public void modificarNota() {
-    }
-
-    public void eliminarNota() {
-    }
-
     public void modificarProfesor() throws XMLDBException {
         // Limpiamos la pantalla
         System.out.print("\033[H\033[2J");
@@ -772,80 +760,80 @@ public class NotasXND {
     }
 
     public List<Modulo> listarModulosPorAlumno(String user2) throws XMLDBException {
-                // Limpiamos la pantalla
-                System.out.print("\033[H\033[2J");        
-                String consulta = "for $l in //alumnos/alumno where $l/nom_user='" + user2 + "' return $l";
-                ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
-                ResourceIterator iterador = resultado.getIterator();
-                List<Alumno> todosLosAlumnos = new ArrayList<>();
-                while (iterador.hasMoreResources()) {
-                    XMLResource res = (XMLResource) iterador.nextResource();
-                    // Tenemos que leer el resultado como un DOM
-                    Node nodo = res.getContentAsDOM();
-                    // Leemos la lista de hijos que son tipo alunmo
-                    NodeList hijo = nodo.getChildNodes();
-                    // Leemos los hijos del alumno
-                    NodeList datosLibro = hijo.item(0).getChildNodes();
-                    Alumno a = leerDomAlumno(datosLibro);
-                    todosLosAlumnos.add(a);
-                }
-                List<Modulo> todosLosModulos = new ArrayList<>();
-                for (Alumno a : todosLosAlumnos) {
-                    consulta = "for $l in //modulos/modulo where $l/id='" + a.getIdModulo() + "' return $l";
-                    resultado = ejecutarConsultaXQuery(colecNotas, consulta);
-                    iterador = resultado.getIterator();
-                    while (iterador.hasMoreResources()) {
-                        XMLResource res = (XMLResource) iterador.nextResource();
-                        // Tenemos que leer el resultado como un DOM
-                        Node nodo = res.getContentAsDOM();
-                        // Leemos la lista de hijos que son tipo alunmo
-                        NodeList hijo = nodo.getChildNodes();
-                        // Leemos los hijos del alumno
-                        NodeList datosLibro = hijo.item(0).getChildNodes();
-                        Modulo m = leerDomModulo(datosLibro);
-                        todosLosModulos.add(m);
-                    }
-                }
-                return todosLosModulos;
+        // Limpiamos la pantalla
+        System.out.print("\033[H\033[2J");
+        String consulta = "for $l in //alumnos/alumno where $l/nom_user='" + user2 + "' return $l";
+        ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
+        ResourceIterator iterador = resultado.getIterator();
+        List<Alumno> todosLosAlumnos = new ArrayList<>();
+        while (iterador.hasMoreResources()) {
+            XMLResource res = (XMLResource) iterador.nextResource();
+            // Tenemos que leer el resultado como un DOM
+            Node nodo = res.getContentAsDOM();
+            // Leemos la lista de hijos que son tipo alunmo
+            NodeList hijo = nodo.getChildNodes();
+            // Leemos los hijos del alumno
+            NodeList datosLibro = hijo.item(0).getChildNodes();
+            Alumno a = leerDomAlumno(datosLibro);
+            todosLosAlumnos.add(a);
+        }
+        List<Modulo> todosLosModulos = new ArrayList<>();
+        for (Alumno a : todosLosAlumnos) {
+            consulta = "for $l in //modulos/modulo where $l/id='" + a.getIdModulo() + "' return $l";
+            resultado = ejecutarConsultaXQuery(colecNotas, consulta);
+            iterador = resultado.getIterator();
+            while (iterador.hasMoreResources()) {
+                XMLResource res = (XMLResource) iterador.nextResource();
+                // Tenemos que leer el resultado como un DOM
+                Node nodo = res.getContentAsDOM();
+                // Leemos la lista de hijos que son tipo alunmo
+                NodeList hijo = nodo.getChildNodes();
+                // Leemos los hijos del alumno
+                NodeList datosLibro = hijo.item(0).getChildNodes();
+                Modulo m = leerDomModulo(datosLibro);
+                todosLosModulos.add(m);
             }
+        }
+        return todosLosModulos;
+    }
 
     public Object listarNotasPorAlumno(String user2) throws XMLDBException {
-                // Limpiamos la pantalla
-                System.out.print("\033[H\033[2J");        
-                String consulta = "for $l in //alumnos/alumno where $l/nom_user='" + user2 + "' return $l";
-                ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
-                ResourceIterator iterador = resultado.getIterator();
-                List<Alumno> todosLosAlumnos = new ArrayList<>();
-                while (iterador.hasMoreResources()) {
-                    XMLResource res = (XMLResource) iterador.nextResource();
-                    // Tenemos que leer el resultado como un DOM
-                    Node nodo = res.getContentAsDOM();
-                    // Leemos la lista de hijos que son tipo alunmo
-                    NodeList hijo = nodo.getChildNodes();
-                    // Leemos los hijos del alumno
-                    NodeList datosLibro = hijo.item(0).getChildNodes();
-                    Alumno a = leerDomNota(datosLibro);
-                    todosLosAlumnos.add(a);
-                }
-                List<Alumno> notasAlumno = new ArrayList<>();
-                for (Alumno a : todosLosAlumnos) {
-                    consulta = "for $l in //alumnos/alumno where $l/id='" + a.getIdAlumno() + "' return $l";
-                    resultado = ejecutarConsultaXQuery(colecNotas, consulta);
-                    iterador = resultado.getIterator();
-                    while (iterador.hasMoreResources()) {
-                        XMLResource res = (XMLResource) iterador.nextResource();
-                        // Tenemos que leer el resultado como un DOM
-                        Node nodo = res.getContentAsDOM();
-                        // Leemos la lista de hijos que son tipo alunmo
-                        NodeList hijo = nodo.getChildNodes();
-                        // Leemos los hijos del alumno
-                        NodeList datosLibro = hijo.item(0).getChildNodes();
-                        Alumno n = leerDomNota(datosLibro);
-                        notasAlumno.add(n);
-                    }
-                }
-                return notasAlumno;
+        // Limpiamos la pantalla
+        System.out.print("\033[H\033[2J");
+        String consulta = "for $l in //alumnos/alumno where $l/nom_user='" + user2 + "' return $l";
+        ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
+        ResourceIterator iterador = resultado.getIterator();
+        List<Alumno> todosLosAlumnos = new ArrayList<>();
+        while (iterador.hasMoreResources()) {
+            XMLResource res = (XMLResource) iterador.nextResource();
+            // Tenemos que leer el resultado como un DOM
+            Node nodo = res.getContentAsDOM();
+            // Leemos la lista de hijos que son tipo alunmo
+            NodeList hijo = nodo.getChildNodes();
+            // Leemos los hijos del alumno
+            NodeList datosLibro = hijo.item(0).getChildNodes();
+            Alumno a = leerDomNota(datosLibro);
+            todosLosAlumnos.add(a);
+        }
+        List<Alumno> notasAlumno = new ArrayList<>();
+        for (Alumno a : todosLosAlumnos) {
+            consulta = "for $l in //alumnos/alumno where $l/id='" + a.getIdAlumno() + "' return $l";
+            resultado = ejecutarConsultaXQuery(colecNotas, consulta);
+            iterador = resultado.getIterator();
+            while (iterador.hasMoreResources()) {
+                XMLResource res = (XMLResource) iterador.nextResource();
+                // Tenemos que leer el resultado como un DOM
+                Node nodo = res.getContentAsDOM();
+                // Leemos la lista de hijos que son tipo alunmo
+                NodeList hijo = nodo.getChildNodes();
+                // Leemos los hijos del alumno
+                NodeList datosLibro = hijo.item(0).getChildNodes();
+                Alumno n = leerDomNota(datosLibro);
+                notasAlumno.add(n);
             }
+        }
+        return notasAlumno;
+    }
 
     private Alumno leerDomNota(NodeList datosLibro) {
 
@@ -868,8 +856,6 @@ public class NotasXND {
         }
         return n;
     }
-
-
 
     public void imprimirNotas(Object listarNotasPorAlumno) {
 

@@ -7,6 +7,7 @@ import java.io.Console;
  */
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,11 +36,15 @@ public class TestXND {
         // Crear un objeto Console para leer la contraseña
         Console console = System.console();
 
-        // Crear objeto NotasXND para acceder a la bbdd
+        // Crear objetos NotasXND e HistorialXND para acceder a la bbdd
         NotasXND gestor = new NotasXND();
+        HistorialXND historial = new HistorialXND();
 
         // Crear un objeto Profesor para almacenar el usuario logueado
         Profesor profesor = null;
+
+        // Fecha y hora actual
+        String fecha = dateFormat.format(timestamp);
 
         // Bucle infinito
         while (true) {
@@ -120,7 +125,7 @@ public class TestXND {
                             // Comprobar si el usuario existe
                             if (gestor.comprobarProfesor(user, pass)) {
 
-                                // gestorHistorial.insertarHistorial(user, "P", "Inicio de sesión profesor");
+                                historial.insertarHistorial("P", user, "Inicio de sesión " + fecha);
 
                                 // Bucle para mostrar el menú de profesor
                                 Boolean menuProfesor = true;
@@ -151,7 +156,7 @@ public class TestXND {
                                         case 1:
                                             // Llamar a método para insertar módulo
                                             gestor.insertarModulo();
-                                            // gestorHistorial.insertarHistorial(user, "M", "Modulo insertado");
+                                            historial.insertarHistorial("M", user, "Modulo insertado " + fecha);
                                             break;
                                         case 2:
                                             // Limpiar pantalla
@@ -164,28 +169,30 @@ public class TestXND {
                                         case 3:
                                             // Llamar a método para eliminar módulo
                                             gestor.eliminarModulo();
-                                            // gestorHistorial.insertarHistorial(user, "M", "Modulo eliminado");
+                                            historial.insertarHistorial("M", user, "Modulo eliminado " + fecha);
                                             break;
                                         case 4:
                                             // Limpiar pantalla
                                             System.out.print("\033[H\033[2J");
                                             // Llamar a método para listar todos los alumnos
                                             gestor.imprimirAlumnos(gestor.listarAlumnos());
+                                            System.out.println();
                                             gestor.pausa();
                                             break;
                                         case 5:
                                             // Llamar a método para insertar alumno
                                             gestor.modificarAlumno();
-                                            // gestorHistorial.insertarHistorial(user, "G", "Alumno insertado");
+                                            historial.insertarHistorial("P", user, "Alumno modificado " + fecha);
                                             break;
                                         case 6:
                                             // Llamar a método para insertar alumno
                                             gestor.insertarAlumno();
-                                            // gestorHistorial.insertarHistorial(user, "G", "Alumno insertado");
+                                            historial.insertarHistorial("P", user, "Alumno insertado " + fecha  );
                                             break;
                                         case 7:
                                             // Llamar a método para eliminar alumnos por módulo
                                             gestor.eliminarAlumno();
+                                            historial.insertarHistorial("P", user, "Alumno eliminado " + fecha);
                                             break;
                                         case 8:
                                             // Llamar a método para listar alumnos por módulo
@@ -211,6 +218,7 @@ public class TestXND {
                                 System.out.print("\033[31m");
                                 System.out.println("Usuario o contraseña incorrectos.");
                                 System.out.println("\033[0m");
+                                historial.insertarHistorial("P", user, "Contraseña incorrecta" + fecha);
                                 gestor.pausa();
                             }
 
@@ -233,6 +241,7 @@ public class TestXND {
 
                             if (gestor.comprobarAlumno(user, pass)) {
 
+                                historial.insertarHistorial("A", user, "Inicio de sesión " + fecha);
                                 // gestorHistorial.insertarHistorial(user, "A", "Inicio de sesión alumno");
 
                                 // Bucle para mostrar el menú de alumno
@@ -272,7 +281,7 @@ public class TestXND {
                                         case 0:
                                             System.out.print("\033[H\033[2J");
                                             System.out.println("Saliendo...");
-
+                                            historial.insertarHistorial("A", user, "Cierre de sesión " + fecha);
                                             menuAlumno = false;
                                             gestor.pausa();
                                             break;
@@ -289,6 +298,7 @@ public class TestXND {
                                 System.out.print("\033[31m");
                                 System.out.println("Usuario o contraseña incorrectos.");
                                 System.out.println("\033[0m");
+                                historial.insertarHistorial("A", user, "Contraseña incorrecta" + fecha);
                                 gestor.pausa();
                             }
 
@@ -310,7 +320,7 @@ public class TestXND {
                             // Comprobar si el usuario existe
                             if (gestor.comprobarProfesor(user, pass)) {
 
-                                // gestorHistorial.insertarHistorial(user, "P", "Inicio de sesión
+                                historial.insertarHistorial("P", user, "Inicio de sesión " + fecha);
                                 // administrador");
 
                                 while (menuAdmin) {
@@ -340,13 +350,14 @@ public class TestXND {
                                         case 1:
                                             // Llamar a método para listar historial
                                             System.out.print("\033[H\033[2J");
-                                            // gestorHistorial.listar();
+                                            historial.imprimirHistorial(historial.mostrarHistorial());
                                             gestor.pausa();
                                             break;
                                         case 2:
                                             // Llamar a método para insertar módulo
                                             System.out.print("\033[H\033[2J");
                                             gestor.insertarModulo();
+                                            historial.insertarHistorial("P", user, "Insertar módulo " + fecha);
                                             break;
                                         case 3:
                                             // Limpiar pantalla
@@ -360,11 +371,13 @@ public class TestXND {
                                             // Llamar a método para eliminar módulo
                                             System.out.print("\033[H\033[2J");
                                             gestor.eliminarModulo();
+                                            historial.insertarHistorial("P", user, "Eliminar módulo " + fecha);
                                             break;
                                         case 5:
                                             // Llamar a método para insertar alumno
                                             System.out.print("\033[H\033[2J");
                                             gestor.insertarAlumno();
+                                            historial.insertarHistorial("P", user, "Insertar alumno " + fecha);
                                             break;
                                         case 6:
                                             // Llamar a método para listar todos los alumnos
@@ -381,6 +394,7 @@ public class TestXND {
                                             // Llamar a método para eliminar alumno
                                             System.out.print("\033[H\033[2J");
                                             gestor.eliminarAlumno();
+                                            historial.insertarHistorial("P", user, "Eliminar alumno " + fecha);
                                             break;
                                         case 9:
                                             // Llamar a método para listar tabla profesores
@@ -392,20 +406,24 @@ public class TestXND {
                                         case 10:
                                             // Llamar a metodo para insertar profesor
                                             gestor.insertarProfesor();
+                                            historial.insertarHistorial("P", user, "Insertar profesor " + fecha);
                                             break;
                                         case 11:
                                             // Llamar a método para modificar profesor
                                             System.out.print("\033[H\033[2J");
                                             gestor.modificarProfesor();
+                                            historial.insertarHistorial("P", user, "Modificar profesor " + fecha);
                                             break;
                                         case 12:
                                             // Llamar a método para eliminar profesor
                                             System.out.print("\033[H\033[2J");
                                             gestor.eliminarProfesor();
+                                            historial.insertarHistorial("P", user, "Eliminar profesor " + fecha);
                                             break;
                                         case 0:
                                             System.out.print("\033[H\033[2J");
                                             System.out.println("Saliendo...");
+                                            historial.insertarHistorial("P", user, "Cierre de sesión " + fecha);
                                             gestor.pausa();
                                             menuAdmin = false;
                                             break;
@@ -423,6 +441,8 @@ public class TestXND {
                                 System.out.print("\033[31m");
                                 System.out.println("Usuario o contraseña incorrectos.");
                                 System.out.println("\033[0m");
+                                historial.insertarHistorial("P", user,
+                                        "Contraseña incorrecta administracion " + fecha);
                                 gestor.pausa();
                             }
                             break;

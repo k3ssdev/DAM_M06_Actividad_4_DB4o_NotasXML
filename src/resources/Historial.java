@@ -4,41 +4,27 @@ import java.util.List;
 
 public class Historial {
 
-    private Integer id;
+    private String id;
     private String tipo;
-    private int user;
+    private String user;
     private String detalle;
-    private String tiempoStamp;
-
-    public String getTiempoStamp() {
-        return tiempoStamp;
-    }
-
-    public void setTiempoStamp(String tiempoStamp) {
-        this.tiempoStamp = tiempoStamp;
-    }
-
-    private List<Profesor> profesores;
-    private List<Alumno> alumnos;
 
     public Historial() {
+
     }
 
-    public Historial(Integer id, String tipo, int user, String detalle, List<Profesor> profesores,
-            List<Alumno> alumnos) {
+    public Historial(String id, String tipo, String user, String detalle) {
         this.id = id;
         this.tipo = tipo;
         this.user = user;
         this.detalle = detalle;
-        this.profesores = profesores;
-        this.alumnos = alumnos;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -50,11 +36,11 @@ public class Historial {
         this.tipo = tipo;
     }
 
-    public int getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(int user) {
+    public void setUser(String user) {
         this.user = user;
     }
 
@@ -66,26 +52,17 @@ public class Historial {
         this.detalle = detalle;
     }
 
-    public List<Profesor> getProfesores() {
-        return profesores;
-    }
-
-    public void setProfesores(List<Profesor> profesores) {
-        this.profesores = profesores;
-    }
-
-    public List<Alumno> getAlumnos() {
-        return alumnos;
-    }
-
-    public void setAlumnos(List<Alumno> alumnos) {
-        this.alumnos = alumnos;
-    }
 
     @Override
     public String toString() {
-        return "Historial{" + "id=" + id + ", tipo=" + tipo + ", user=" + user + ", detalle=" + detalle
-                + ", profesores=" + profesores + ", alumnos=" + alumnos + '}';
+        return "Historial{" +
+                "id='" + id + '\'' +
+                ", tipo='" + tipo + '\'' +
+                ", user='" + user + '\'' +
+                ", detalle='" + detalle + '\'' +
+                '}';
+
     }
 
 }
+    
