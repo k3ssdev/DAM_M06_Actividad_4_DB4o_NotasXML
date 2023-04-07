@@ -31,7 +31,7 @@ public class NotasXND {
     private final Database database;
     private final String uri = "xmldb:exist://localhost:8080/exist/xmlrpc";
     private final String user = "admin";
-    private final String pass = "Oct4rin0";
+    private final String pass = "admin";
     private final String colecNotas = "/db/Notas";
 
     // Scanner para leer datos por teclado
@@ -237,9 +237,6 @@ public class NotasXND {
         }
     }
 
-    public void modificarModulo() {
-
-    }
 
     // Metodo para listar los módulos con una consulta for
     public List<Modulo> listarModulos() throws XMLDBException {
@@ -397,8 +394,8 @@ public class NotasXND {
         return todosLosAlumnos;
     }
 
-    // Método auxiliar que lee los datos de un Libro
-    private Alumno leerDomAlumno(NodeList datos) {
+    // Método auxiliar que lee los datos de un alumno
+    private Alumno leerDomAlumno(NodeList datos) throws XMLDBException {
         int contador = 1;
         Alumno a = new Alumno();
         for (int i = 0; i < datos.getLength(); i++) {
@@ -422,14 +419,16 @@ public class NotasXND {
                         contador++;
                         break;
                     case 5:
+                    if (ntemp.getChildNodes().item(0).getNodeValue().equals("null")) {
+                        a.setNota(0.0);
+                    } else {
                         a.setNota(Double.parseDouble(ntemp.getChildNodes().item(0).getNodeValue()));
+                    }
                         contador++;
                         break;
                     case 6:
                         a.setIdModulo(ntemp.getChildNodes().item(0).getNodeValue());
                         contador++;
-                        break;
-                    default:
                         break;
                 }
             }
@@ -437,8 +436,9 @@ public class NotasXND {
         return a;
     }
 
+
     // Imprimir los datos alumnos en formato tabla
-    public void imprimirAlumnos(List<Alumno> listaAlumnos) {
+    public void imprimirAlumnos(List<Alumno> listaAlumnos)  {
         // Imprimir encabezado de la tabla
         System.out.println("+-------+-----------------+-----------------+-----------------+---------+----------+");
         System.out.printf(
@@ -453,6 +453,70 @@ public class NotasXND {
         }
         System.out.println("+-------+-----------------+-----------------+-----------------+---------+----------+");
         System.out.println();
+    }
+
+    public void modificarAlumno() throws XMLDBException {
+        // Limpiamos la pantalla
+        System.out.print("\033[H\033[2J");
+        imprimirAlumnos(listarAlumnos());
+        System.out.println();
+        // Solicitamos los datos del alumno, color verde, si no se introduce nada, se
+        // queda el valor anterior
+        System.out.print("\033[32mIntroduce el id del alumno a modificar: \033[0m");
+        String idAlumno = sc.nextLine();
+        if (existeAlumno(idAlumno)) {
+            System.out.print("\033[32mIntroduce el nombre del alumno: \033[0m");
+            String nombre = sc.nextLine();
+            System.out.print("\033[32mIntroduce el nombre de usuario: \033[0m");
+            String nomUser = sc.nextLine();
+            System.out.print("\033[32mIntroduce la contraseña: \033[0m");
+            String password = sc.nextLine();
+            System.out.print("\033[32mIntroduce la nota: \033[0m");
+            String nota = sc.nextLine();
+            System.out.print("\033[32mIntroduce el id del módulo: \033[0m");
+            String idModulo = sc.nextLine();
+            // Creamos el alumno
+            Alumno a = new Alumno();
+            a.setIdAlumno(idAlumno);
+            // Se comprueba si existe, si no existe muestra un mensaje de error
+            if (existeAlumno(idAlumno)) {
+                // Se comprueba si se ha introducido algo, si no se ha introducido nada, se
+                // queda el valor anterior
+                if (idAlumno.equals("")) {
+                    idAlumno=a.getIdAlumno();
+                }
+                if (nombre.equals("")) {
+                    nombre=a.getNombre();
+                }
+                if (!nomUser.equals("")) {
+                    nomUser=a.getNomUser();
+                }
+                if (password.equals("")) {
+                    password=a.getPassword();
+                }
+                if (nota.equals("")) {
+                    nota=String.valueOf(a.getNota());
+                }
+                if (idModulo.equals("")) {
+                    idModulo=a.getIdModulo();
+                }
+                // Creamos la consulta
+                String consulta = "update replace //alumnos/alumno[id='" + idAlumno + "']"
+                        + " with <alumno>" + "<id>" + idAlumno + "</id>"
+                        + "<nombre>" + nombre + "</nombre>"
+                        + "<nom_user>" + nomUser + "</nom_user>"
+                        + "<password>" + password + "</password>"
+                        + "<nota>" + nota + "</nota>"
+                        + "<modulo>" + idModulo + "</modulo></alumno>";
+                // Ejecutamos la consulta
+                ejecutarConsultaUpdate(colecNotas, consulta);
+                System.out.println("\033[32mAlumno modificado correctamente\033[0m");
+            } else {
+                System.out.println("\033[31mEl alumno no existe\033[0m");
+            }
+        } else {
+            System.out.println("\033[31mEl alumno no existe\033[0m");
+        }
     }
 
     public void listarAlumnosPorModulo(Object object) {
