@@ -4,30 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Alumno {
-    private Integer idAlumno;
+    private String idAlumno;
     private String nombre;
     private String nomUser;
     private String password;
-    private List<Notas> notas; // nueva línea
+    private String idModulo;
+    private Double nota;
 
     public Alumno() {
-        this.notas = new ArrayList<>(); // nueva línea
+
     }
 
-    public Alumno(Integer idAlumno, String nombre, String nomUser, String password) {
+    public Alumno(String idAlumno, String nombre, String nomUser, String password, String idModulo, Double nota) {
         this.idAlumno = idAlumno;
         this.nombre = nombre;
         this.nomUser = nomUser;
         this.password = password;
-        this.notas = new ArrayList<>(); // nueva línea
+        this.idModulo = idModulo;
+        this.nota = nota;
     }
 
-    public Integer getIdAlumno() {
+    public String getIdAlumno() {
         return idAlumno;
     }
 
-    public void setIdAlumno(Integer idAlumno) {
-        this.idAlumno = idAlumno + 1;
+    public void setIdAlumno(String idAlumno) {
+        this.idAlumno = idAlumno;
     }
 
     public String getNombre() {
@@ -54,11 +56,33 @@ public class Alumno {
         this.password = password;
     }
 
-    public List<Notas> getNotas() { // nueva línea
-        return notas;
+    public String getIdModulo() {
+        return idModulo;
     }
 
-    public void setNotas(List<Notas> notas) { // nueva línea
-        this.notas = notas;
+    public void setIdModulo(String idModulo) {
+        this.idModulo = idModulo;
     }
+
+    public Double getNota() {
+        return nota;
+    }
+
+    public void setNota(Double nota) {
+        this.nota = nota;
+    }
+
+    @Override
+    public String toString() {
+        return "Alumno{" +
+                "idAlumno='" + idAlumno + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", usuario='" + nomUser + '\'' +
+                ", password='" + password + '\'' +
+                ", idModulo='" + idModulo + '\'' +
+                ", nota=" + nota +
+                '}';
+
+    }
+
 }

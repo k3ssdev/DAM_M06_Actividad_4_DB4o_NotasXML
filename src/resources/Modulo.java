@@ -4,26 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Modulo {
-    private Integer idModulo;
+    private String idModulo;
     private String nombre;
-    private List<Notas> notas; // nueva línea
+    private List<Modulo> modulos = new ArrayList<>();
 
-    public Modulo() {
-        this.notas = new ArrayList<>(); // nueva línea
-    }
 
-    public Modulo(Integer idModulo, String nombre) {
+
+    public Modulo(String idModulo, String nombre) {
         this.idModulo = idModulo;
         this.nombre = nombre;
-        this.notas = new ArrayList<>(); // nueva línea
     }
 
-    public Integer getIdModulo() {
+    public Modulo() {
+    }
+
+    public String getIdModulo() {
         return idModulo;
     }
 
-    public void setIdModulo(Integer idModulo) {
-        this.idModulo = idModulo;
+    public void setIdModulo(String string) {
+        this.idModulo = string;
     }
 
     public String getNombre() {
@@ -34,11 +34,12 @@ public class Modulo {
         this.nombre = nombre;
     }
 
-    public List<Notas> getNotas() { // nueva línea
-        return notas;
-    }
-
-    public void setNotas(List<Notas> notas) { // nueva línea
-        this.notas = notas;
+    @Override
+    public String toString() {
+        // tabla de modulos
+        return "Modulo{" +
+                "idModulo='" + idModulo + '\'' +
+                ", nombre='" + nombre + '\'' +
+                '}';
     }
 }

@@ -15,12 +15,14 @@ import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.CompiledExpression;
 import org.xmldb.api.base.Database;
+import org.xmldb.api.base.Resource;
 import org.xmldb.api.base.ResourceIterator;
 import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XQueryService;
 
+import resources.Alumno;
 import resources.Modulo;
 import resources.Profesor;
 
@@ -189,16 +191,21 @@ public class NotasXND {
         }
     }
 
-    public void insertarModulo() {
-        // Creamos un objeto de tipo Modulo y pedimos datos por teclado
-        Modulo miModulo = new Modulo();
-        System.out.println("Introduzca el ID del módulo:");
-        miModulo.setIdModulo(sc.nextInt());
-        sc.nextLine();
-        System.out.println("Introduzca el nombre del módulo:");
-        miModulo.setNombre(sc.nextLine());
-        // Comprobamos que no existe un módulo con ese ID
-        if (!existeModulo(miModulo.getIdModulo())) {
+    public void insertarModulo() throws XMLDBException {
+        // Limpiamos la pantalla
+        System.out.print("\033[H\033[2J");
+        imprimirModulos(listarModulos());
+        System.out.println();
+        // Solicitamos los datos del módulo, color verde
+        System.out.print("\033[32mIntroduzca el ID del modulo:\033[0m ");
+        String idModulo = sc.nextLine();
+        System.out.print("\033[32mIntroduzca el nombre del modulo:\033[0m ");
+        String nombreModulo = sc.nextLine();
+        System.out.println();
+        // Creamos el módulo
+        Modulo miModulo = new Modulo(idModulo, nombreModulo);
+        // Comprobamos que no existe un módulo con el mismo id
+        if (!existeModulo(idModulo)) {
             // Creamos la consulta
             String consulta = "update insert <modulo><id>" + miModulo.getIdModulo() + "</id><nombre>"
                     + miModulo.getNombre() + "</nombre></modulo> into /modulos";
@@ -209,11 +216,14 @@ public class NotasXND {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("Ya existe un módulo con ese ID.");
+            // Si existe un módulo con el mismo id, mostramos un mensaje de error en rojo
+            System.out.println("\033[31m¡Ya existe un módulo con el id " + idModulo + "!\033[0m");
+            System.out.println();
+            pausa();
         }
     }
 
-    private boolean existeModulo(Integer idModulo) {
+    private boolean existeModulo(String idModulo) {
         try {
             // Creamos la consulta
             String consulta = "for $t in //modulos/modulo where $t/id='" + idModulo + "' return $t";
@@ -227,36 +237,222 @@ public class NotasXND {
         }
     }
 
+    public void modificarModulo() {
 
-    public void listarModulos() {
-        try {
-            // Creamos la consulta
-            String consulta = "for $t in //modulos/modulo return $t";
-            // Ejecutamos la consulta
-            ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
-            // Recorremos el resultado
-            ResourceIterator iterador = resultado.getIterator();
-            while (iterador.hasMoreResources()) {
-                XMLResource recurso = (XMLResource) iterador.nextResource();
-                Node nodo = recurso.getContentAsDOM();
-                NodeList listaNodos = nodo.getChildNodes();
-                Integer idModulo = Integer.parseInt(listaNodos.item(0).getTextContent());
-                String nombre = listaNodos.item(1).getTextContent();
-                Modulo miModulo = new Modulo(idModulo, nombre);
-                System.out.println(miModulo);
+    }
+
+    // Metodo para listar los módulos con una consulta for
+    public List<Modulo> listarModulos() throws XMLDBException {
+        String consulta = "for $l in //modulos/modulo return $l";
+        ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
+        ResourceIterator iterador = resultado.getIterator();
+        List<Modulo> todosLosModulos = new ArrayList<>();
+        while (iterador.hasMoreResources()) {
+            XMLResource res = (XMLResource) iterador.nextResource();
+            // Tenemos que leer el resultado como un DOM
+            Node nodo = res.getContentAsDOM();
+            // Leemos la lista de hijos que son tipo Libro
+            NodeList hijo = nodo.getChildNodes();
+            // Leemos los hijos del Libro
+            NodeList datosLibro = hijo.item(0).getChildNodes();
+            Modulo m = leerDomModulo(datosLibro);
+            todosLosModulos.add(m);
+        }
+
+        return todosLosModulos;
+
+    }
+
+    // Imprimir los datos de un módulo en tabla al pasarle lista de módulos
+    public void imprimirModulos(List<Modulo> listaModulos) {
+        // Imprimir encabezado de la tabla
+        System.out.println("+-------+---------+");
+        System.out.printf("| \033[38;5;206m%-5s\033[0m | \033[38;5;206m%-7s\033[0m |\n", "ID", "Nombre");
+        System.out.println("+-------+---------+");
+        // Imprimir los datos de los módulos
+        for (Modulo m : listaModulos) {
+            System.out.printf("| \033[38;5;15m%-5s\033[0m | \033[38;5;15m%-7s\033[0m |\n", m.getIdModulo(),
+                    m.getNombre());
+        }
+        // Imprimir pie de la tabla
+        System.out.println("+-------+---------+");
+    }
+
+    // Método auxiliar que lee los datos de un Libro
+    private Modulo leerDomModulo(NodeList datos) {
+        int contador = 1;
+        Modulo m = new Modulo();
+        for (int i = 0; i < datos.getLength(); i++) {
+            Node ntemp = datos.item(i);
+            if (ntemp.getNodeType() == Node.ELEMENT_NODE) {
+                switch (contador) {
+                    case 1:
+                        m.setIdModulo(ntemp.getChildNodes().item(0).getNodeValue());
+                        contador++;
+                        break;
+                    case 2:
+                        m.setNombre(ntemp.getChildNodes().item(0).getNodeValue());
+                        contador++;
+                        break;
+                    default:
+                        break;
+                }
             }
-        } catch (XMLDBException e) {
-            e.printStackTrace();
+        }
+        return m;
+    }
+
+    public void eliminarModulo() throws XMLDBException {
+        // Limpiamos la pantalla
+        System.out.print("\033[H\033[2J");
+        imprimirModulos(listarModulos());
+        System.out.println();
+        // Solicitamos los datos del módulo, color verde
+        System.out.print("\033[32mIntroduzca el ID del modulo:\033[0m ");
+        String idModulo = sc.nextLine();
+        System.out.println();
+        // Comprobamos si existe el módulo
+        if (existeModulo(idModulo)) {
+            // Creamos la consulta
+            String consulta = "update delete //modulos/modulo[id='" + idModulo + "']";
+            // Ejecutamos la consulta
+            try {
+                ejecutarConsultaUpdate(colecNotas, consulta);
+            } catch (XMLDBException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Si existe un módulo con el mismo id, mostramos un mensaje de error en rojo
+            System.out.println("\033[31m¡No existe un módulo con el id " + idModulo + "!\033[0m");
+            System.out.println();
+            pausa();
         }
     }
 
-    public void eliminarModulo() {
+    public void insertarAlumno() throws XMLDBException {
+        // Limpiamos la pantalla
+        System.out.print("\033[H\033[2J");
+        imprimirAlumnos(listarAlumnos());
+        System.out.println();
+        // Solicitamos los datos del alumno, color verde
+        System.out.print("\033[32mIntroduzca el ID del alumno:\033[0m ");
+        String idAlumno = sc.nextLine();
+        System.out.print("\033[32mIntroduzca el nombre del alumno:\033[0m ");
+        String nombreAlumno = sc.nextLine();
+        System.out.print("\033[32mIntroduzca el usuario del alumno:\033[0m ");
+        String usuarioAlumno = sc.nextLine();
+        System.out.print("\033[32mIntroduzca la contraseña del alumno:\033[0m ");
+        String contrasenaAlumno = sc.nextLine();
+        System.out.println();
+        // Comprobamos si existe el alumno
+        if (!existeAlumno(idAlumno)) {
+            // Creamos la consulta
+            String consulta = "update insert <alumno><id>" + idAlumno + "</id><nombre>" + nombreAlumno
+                    + "</nombre><usuario>" + usuarioAlumno + "</usuario><contrasena>" + contrasenaAlumno
+                    + "</contrasena></alumno> into //alumnos";
+            // Ejecutamos la consulta
+            try {
+                ejecutarConsultaUpdate(colecNotas, consulta);
+            } catch (XMLDBException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Si existe un alumno con el mismo id, mostramos un mensaje de error en rojo
+            System.out.println("\033[31m¡Ya existe un alumno con el id " + idAlumno + "!\033[0m");
+            System.out.println();
+            pausa();
+        }
     }
 
-    public void insertarAlumno() {
+    private boolean existeAlumno(String idAlumno) {
+        try {
+            // Creamos la consulta
+            String consulta = "for $t in //alumnos/alumno where $t/id='" + idAlumno + "' return $t";
+            // Ejecutamos la consulta
+            ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
+            // Devolvemos true si el resultado tiene algún elemento
+            return resultado.getSize() > 0;
+        } catch (XMLDBException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    public void listarAlumnos() {
+    public List<Alumno> listarAlumnos() throws XMLDBException {
+        String consulta = "for $l in //alumnos/alumno return $l";
+        ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
+        ResourceIterator iterador = resultado.getIterator();
+        List<Alumno> todosLosAlumnos = new ArrayList<>();
+        while (iterador.hasMoreResources()) {
+            XMLResource res = (XMLResource) iterador.nextResource();
+            // Tenemos que leer el resultado como un DOM
+            Node nodo = res.getContentAsDOM();
+            // Leemos la lista de hijos que son tipo Libro
+            NodeList hijo = nodo.getChildNodes();
+            // Leemos los hijos del Libro
+            NodeList datosLibro = hijo.item(0).getChildNodes();
+            Alumno a = leerDomAlumno(datosLibro);
+            todosLosAlumnos.add(a);
+        }
+        return todosLosAlumnos;
+    }
+
+    // Método auxiliar que lee los datos de un Libro
+    private Alumno leerDomAlumno(NodeList datos) {
+        int contador = 1;
+        Alumno a = new Alumno();
+        for (int i = 0; i < datos.getLength(); i++) {
+            Node ntemp = datos.item(i);
+            if (ntemp.getNodeType() == Node.ELEMENT_NODE) {
+                switch (contador) {
+                    case 1:
+                        a.setIdAlumno(ntemp.getChildNodes().item(0).getNodeValue());
+                        contador++;
+                        break;
+                    case 2:
+                        a.setNombre(ntemp.getChildNodes().item(0).getNodeValue());
+                        contador++;
+                        break;
+                    case 3:
+                        a.setNomUser(ntemp.getChildNodes().item(0).getNodeValue());
+                        contador++;
+                        break;
+                    case 4:
+                        a.setPassword(ntemp.getChildNodes().item(0).getNodeValue());
+                        contador++;
+                        break;
+                    case 5:
+                        a.setNota(Double.parseDouble(ntemp.getChildNodes().item(0).getNodeValue()));
+                        contador++;
+                        break;
+                    case 6:
+                        a.setIdModulo(ntemp.getChildNodes().item(0).getNodeValue());
+                        contador++;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        return a;
+    }
+
+    // Imprimir los datos alumnos en formato tabla
+    public void imprimirAlumnos(List<Alumno> listaAlumnos) {
+        // Imprimir encabezado de la tabla
+        System.out.println("+-------+-----------------+-----------------+-----------------+---------+----------+");
+        System.out.printf(
+                "| \033[38;5;206m%-5s\033[0m | \033[38;5;206m%-15s\033[0m | \033[38;5;206m%-15s\033[0m | \033[38;5;206m%-15s\033[0m | \033[38;5;206m%-7s\033[0m | \033[38;5;206m%-8s\033[0m |\n",
+                "ID", "Nombre", "NomUser", "Password", "Nota", "IDModulo");
+        System.out.println("+-------+-----------------+-----------------+-----------------+---------+----------+");
+        // Imprimir los datos de los alumnos
+        for (Alumno a : listaAlumnos) {
+            System.out.printf(
+                    "| \033[38;5;15m%-5s\033[0m | \033[38;5;15m%-15s\033[0m | \033[38;5;15m%-15s\033[0m | \033[38;5;15m%-15s\033[0m | \033[38;5;15m%-7s\033[0m | \033[38;5;15m%-8s\033[0m |\n",
+                    a.getIdAlumno(), a.getNombre(), a.getNomUser(), a.getPassword(), a.getNota(), a.getIdModulo());
+        }
+        System.out.println("+-------+-----------------+-----------------+-----------------+---------+----------+");
+        System.out.println();
     }
 
     public void listarAlumnosPorModulo(Object object) {
@@ -279,8 +475,6 @@ public class NotasXND {
 
     public void eliminarNota() {
     }
-
-
 
     public void modificarProfesor() {
     }

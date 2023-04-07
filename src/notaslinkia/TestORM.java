@@ -164,8 +164,11 @@ public class TestORM {
                                             // gestorHistorial.insertarHistorial(user, "M", "Modulo insertado");
                                             break;
                                         case 2:
+                                            // Limpiar pantalla
+                                            System.out.print("\033[H\033[2J");
                                             // Llamar a método para listar todos los módulos
-                                            gestor.listarModulos();
+                                            gestor.imprimirModulos(gestor.listarModulos());
+                                            System.out.println();
                                             gestor.pausa();
                                             break;
                                         case 3:
@@ -179,8 +182,10 @@ public class TestORM {
                                             // gestorHistorial.insertarHistorial(user, "G", "Alumno insertado");
                                             break;
                                         case 5:
+                                            // Limpiar pantalla
+                                            System.out.print("\033[H\033[2J");
                                             // Llamar a método para listar todos los alumnos
-                                            gestor.listarAlumnos();
+                                            gestor.imprimirAlumnos(gestor.listarAlumnos());
                                             gestor.pausa();
                                             break;
                                         case 6:
@@ -230,9 +235,12 @@ public class TestORM {
 
                                 }
                             } else {
+                                // Limpiar pantalla
+                                System.out.print("\033[H\033[2J");
+                                // Mensaje de error en rojo
+                                System.out.print("\033[31m");
                                 System.out.println("Usuario o contraseña incorrectos.");
-                                // gestorHistorial.insertarHistorial(user, "P", "Inicio de sesión profesor
-                                // fallido");
+                                System.out.println("\033[0m");
                                 gestor.pausa();
                             }
 
@@ -301,9 +309,12 @@ public class TestORM {
 
                                 }
                             } else {
+                                // Limpiar pantalla
+                                System.out.print("\033[H\033[2J");
+                                // Mensaje de error en rojo
+                                System.out.print("\033[31m");
                                 System.out.println("Usuario o contraseña incorrectos.");
-                                // gestorHistorial.insertarHistorial(user, "A", "Inicio de sesión alumno
-                                // fallido");
+                                System.out.println("\033[0m");
                                 gestor.pausa();
                             }
 
@@ -438,10 +449,13 @@ public class TestORM {
 
                                 }
                             } else {
+                                // Limpiar pantalla
                                 System.out.print("\033[H\033[2J");
+                                // Mensaje de error en rojo
+                                System.out.print("\033[31m");
                                 System.out.println("Usuario o contraseña incorrectos.");
-                                System.out.println("\nPresione una tecla para continuar...");
-                                scanner.nextLine();
+                                System.out.println("\033[0m");
+                                gestor.pausa();
                             }
                             break;
                         case "0":
