@@ -24,6 +24,10 @@ public class Alumno {
         this.nota = nota;
     }
 
+    public Alumno(String idAlumno2, String nombre2, String nomUser2, String password2, double parseDouble,
+            String idModulo2) {
+    }
+
     public String getIdAlumno() {
         return idAlumno;
     }

@@ -22,8 +22,8 @@ public class Notas {
         this.modulo = modulo;
 
         // Agregar la nota al alumno y al módulo correspondientes
-        alumno.getNotas().add(this);
-        modulo.getNotas().add(this);
+        //alumno.getNotas().add(this);
+        //modulo.getNotas().add(this);
     }
 
     public Notas(int codigoNota, int codigoAlumno, int codigoModulo, double nota2) {

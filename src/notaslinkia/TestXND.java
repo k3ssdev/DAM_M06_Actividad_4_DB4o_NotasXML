@@ -7,20 +7,15 @@ import java.io.Console;
  */
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-
 import org.xmldb.api.base.XMLDBException;
 
-import resources.Modulo;
 import resources.Profesor;
 
-public class TestORM {
+public class TestXND {
 
     public static void main(String[] args)
             throws XMLDBException, ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -143,11 +138,7 @@ public class TestORM {
                                     System.out.println(" 5. Modificar alumno");
                                     System.out.println(" 6. Insertar alumno");
                                     System.out.println(" 7. Eliminar alumno");
-                                    System.out.println(" 7. Listar notas");
-                                    System.out.println(" 8. Listar notas por alumno");
-                                    System.out.println(" 9. Añadir nota");
-                                    System.out.println(" 10. Modificar nota");
-                                    System.out.println(" 11. Eliminar nota");
+                                    System.out.println(" 8. Listar alumnos de un módulo");
                                     System.out.print("\033[31m");
                                     System.out.println("\n 0. Salir");
                                     System.out.print("\033[0m");
@@ -193,41 +184,13 @@ public class TestORM {
                                             // gestorHistorial.insertarHistorial(user, "G", "Alumno insertado");
                                             break;
                                         case 7:
-                                            // Llamar a método para listar alumnos por módulo
-                                            gestor.listarAlumnosPorModulo(null);
-                                            break;
-                                        case 8:
                                             // Llamar a método para eliminar alumnos por módulo
                                             gestor.eliminarAlumno();
                                             break;
-                                        case 9:
-                                            // Llamar a método para eliminar alumno
-                                            gestor.eliminarAlumno();
-                                            // gestorHistorial.insertarHistorial(user, "G", "Alumno eliminado");
-                                            break;
-                                        case 10:
-                                            // Listar notas
-                                            gestor.listarNotas2();
+                                        case 8:
+                                            // Llamar a método para listar alumnos por módulo
+                                            gestor.imprimirAlumnos(gestor.listarAlumnosPorModulo());
                                             gestor.pausa();
-                                            break;
-                                        case 11:
-                                            // Listar notas por alumno
-                                            gestor.listarNotasPorAlumno(0);
-                                            break;
-                                        case 12:
-                                            // Insertar notas
-                                            gestor.insertarNota();
-                                            // gestorHistorial.insertarHistorial(user, "N", "Nota insertada");
-                                            break;
-                                        case 13:
-                                            // Modificar notas
-                                            gestor.modificarNota();
-                                            // gestorHistorial.insertarHistorial(user, "N", "Nota modificada");
-                                            break;
-                                        case 14:
-                                            // Eliminar notas
-                                            gestor.eliminarNota();
-                                            // gestorHistorial.insertarHistorial(user, "N", "Nota eliminada");
                                             break;
                                         case 0:
                                             System.out.print("\033[H\033[2J");
@@ -296,11 +259,15 @@ public class TestORM {
 
                                         case 1:
                                             // Llamar a método para listar módulos
-                                            // gestor.listarNotasPorAlumno(gestor.idAlumno(user));
+                                            gestor.imprimirModulos(gestor.listarModulosPorAlumno(user));
+                                            System.out.println();
+                                            gestor.pausa();
                                             break;
                                         case 2:
                                             // Llamar a método para listar notas
-                                            // gestor.listarNotasPorAlumno(gestor.idAlumno(user));
+                                            gestor.imprimirNotas(gestor.listarNotasPorAlumno(user));
+                                            System.out.println();
+                                            gestor.pausa();
                                             break;
                                         case 0:
                                             System.out.print("\033[H\033[2J");
@@ -359,11 +326,10 @@ public class TestORM {
                                     System.out.println("6. Listar TODOS los alumnos");
                                     System.out.println("7. Listar alumnos por módulo");
                                     System.out.println("8. Eliminar alumno");
-                                    System.out.println("9. Listar tabla notas");
-                                    System.out.println("10. Listar tabla profesores");
-                                    System.out.println("11. Insertar profesor");
-                                    System.out.println("12. Modificar profesor");
-                                    System.out.println("13 Eliminar profesor");
+                                    System.out.println("9. Listar tabla profesores");
+                                    System.out.println("10. Insertar profesor");
+                                    System.out.println("11. Modificar profesor");
+                                    System.out.println("12. Eliminar profesor");
                                     System.out.print("\033[31m");
                                     System.out.println("\n0. Salir");
 
@@ -383,9 +349,11 @@ public class TestORM {
                                             gestor.insertarModulo();
                                             break;
                                         case 3:
-                                            // Llamar a método para listar todos los módulos
+                                            // Limpiar pantalla
                                             System.out.print("\033[H\033[2J");
-                                            gestor.listarModulos();
+                                            // Llamar a método para listar todos los módulos
+                                            gestor.imprimirModulos(gestor.listarModulos());
+                                            System.out.println();
                                             gestor.pausa();
                                             break;
                                         case 4:
@@ -401,13 +369,13 @@ public class TestORM {
                                         case 6:
                                             // Llamar a método para listar todos los alumnos
                                             System.out.print("\033[H\033[2J");
-                                            gestor.listarAlumnos();
+                                            gestor.imprimirAlumnos(gestor.listarAlumnos());
                                             gestor.pausa();
                                             break;
                                         case 7:
                                             // Llamar a método para listar alumnos por módulo
-                                            System.out.print("\033[H\033[2J");
-                                            gestor.listarAlumnosPorModulo(null);
+                                            gestor.imprimirAlumnos(gestor.listarAlumnosPorModulo());
+                                            gestor.pausa();
                                             break;
                                         case 8:
                                             // Llamar a método para eliminar alumno
@@ -415,31 +383,25 @@ public class TestORM {
                                             gestor.eliminarAlumno();
                                             break;
                                         case 9:
-                                            // Llamar a método para listar tabla notas
+                                            // Llamar a método para listar tabla profesores
                                             System.out.print("\033[H\033[2J");
-                                            gestor.listarNotas2();
+                                            gestor.imprimirProfesores(gestor.listarProfesores());
+                                            System.out.println();
                                             gestor.pausa();
                                             break;
                                         case 10:
-                                            // Llamar a método para listar tabla profesores
-                                            System.out.print("\033[H\033[2J");
-                                            gestor.listarProfesores();
-                                            gestor.pausa();
-                                            break;
-                                        case 11:
                                             // Llamar a metodo para insertar profesor
-
                                             gestor.insertarProfesor();
                                             break;
-                                        case 12:
+                                        case 11:
                                             // Llamar a método para modificar profesor
                                             System.out.print("\033[H\033[2J");
                                             gestor.modificarProfesor();
                                             break;
-                                        case 13:
+                                        case 12:
                                             // Llamar a método para eliminar profesor
                                             System.out.print("\033[H\033[2J");
-                                            gestor.borrarProfesor();
+                                            gestor.eliminarProfesor();
                                             break;
                                         case 0:
                                             System.out.print("\033[H\033[2J");
@@ -453,7 +415,6 @@ public class TestORM {
                                             gestor.pausa();
                                             break;
                                     }
-
                                 }
                             } else {
                                 // Limpiar pantalla
