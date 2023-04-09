@@ -52,7 +52,7 @@ public class NotasXND {
 
     public boolean comprobarProfesor(String user, String pass) {
         try {
-            String consulta = "for $t in //profesores/profesor where $t/nom_user='" + user + "' and $t/password='"
+            String consulta = "for $t in //profesores/profesor where $t/nomUser='" + user + "' and $t/password='"
                     + pass + "' return $t";
             ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
             return resultado.getSize() > 0;
@@ -93,7 +93,7 @@ public class NotasXND {
         if (!existeProfesor(contrasenaAlumno)) {
             // Creamos la consulta
             String consulta = "update insert <profesor><id>" + id + "</id><nombre>" + nombreAlumno
-                    + "</nombre><nom_user>" + usuarioAlumno + "</nom_user><password>" + contrasenaAlumno
+                    + "</nombre><nomUser>" + usuarioAlumno + "</nomUser><password>" + contrasenaAlumno
                     + "</password></profesor> into //profesores";
             // Ejecutamos la consulta
             try {
@@ -138,7 +138,7 @@ public class NotasXND {
 
     private boolean existeProfesor(String contrasenaAlumno) {
         try {
-            String consulta = "for $t in //profesores/profesor where $t/nom_user='" + contrasenaAlumno + "' return $t";
+            String consulta = "for $t in //profesores/profesor where $t/nomUser='" + contrasenaAlumno + "' return $t";
             ResourceSet resultado = ejecutarConsultaXQuery(colecNotas, consulta);
             return resultado.getSize() > 0;
         } catch (XMLDBException e) {
@@ -161,10 +161,10 @@ public class NotasXND {
 
     public void modificarProfesor(Profesor miProfesor) throws XMLDBException {
         // Deberíamos verificar antes que el libro existe
-        String consulta = "update replace /profesores/profesor[nom_user='" + miProfesor.getNomUser() + "']/nombre "
+        String consulta = "update replace /profesores/profesor[nomUser='" + miProfesor.getNomUser() + "']/nombre "
                 + "with <nombre>" + miProfesor.getNombre() + "</nombre>";
         ejecutarConsultaUpdate(colecNotas, consulta);
-        consulta = "update replace /profesores/profesor[nom_user='" + miProfesor.getNomUser() + "']/password "
+        consulta = "update replace /profesores/profesor[nomUser='" + miProfesor.getNomUser() + "']/password "
                 + "with <password>" + miProfesor.getPassword() + "</password>";
         ejecutarConsultaUpdate(colecNotas, consulta);
     }
@@ -698,8 +698,8 @@ public class NotasXND {
         // Solicitamos los datos del alumno, color verde, si no se introduce nada, se
         // queda el valor anterior
         System.out.print("\033[32mIntroduce el id del profesor a modificar: \033[0m");
-        String idAlumno = sc.nextLine();
-        if (existeProfesor(Integer.parseInt(idAlumno))) {
+        String idProfesor = sc.nextLine();
+        if (existeProfesor(Integer.parseInt(idProfesor))) {
             System.out.println("\033[32m(Si se deja en blanco, se queda el valor anterior)\033[0m");
             System.out.println();
             System.out.print("\033[32mIntroduce el nombre del profesor: \033[0m");
@@ -709,21 +709,24 @@ public class NotasXND {
             System.out.print("\033[32mIntroduce la contraseña: \033[0m");
             String password = sc.nextLine();
 
-            // Creamos el alumno
-            Profesor a = listarProfesores().get(Integer.parseInt(idAlumno) - 1);
+            // Creamos el profesor
+            Profesor a = listarProfesores().get(Integer.parseInt(idProfesor));
             // Si no se introduce nada, se queda el valor anterior
             if (nombre.equals("")) {
+                a.setIdProfesor(Integer.parseInt(idProfesor));
                 nombre = a.getNombre();
             }
             if (nomUser.equals("")) {
+                a.setIdProfesor(Integer.parseInt(idProfesor));
                 nomUser = a.getNomUser();
             }
             if (password.equals("")) {
+                a.setIdProfesor(Integer.parseInt(idProfesor));
                 password = a.getPassword();
             }
             // Creamos la consulta con el id del alumno ingresado
-            String consulta = "update replace //profesores/profesor[id=" + idAlumno + "]"
-                    + " with <profesor> <id>" + idAlumno + "</id>" + " <nombre>" + nombre + "</nombre>"
+            String consulta = "update replace //profesores/profesor[id=" + idProfesor + "]"
+                    + " with <profesor> <id>" + idProfesor + "</id>" + " <nombre>" + nombre + "</nombre>"
                     + " <nomUser>" + nomUser + "</nomUser>" + " <password>" + password + "</password>"
                     + " </profesor>";
             // Ejecutamos la consulta
@@ -740,7 +743,7 @@ public class NotasXND {
             }
         } else {
             // Si el alumno no existe, mostramos un mensaje de error en rojo
-            System.out.println("\033[31m¡No existe ningún alumno con el id " + idAlumno + "!\033[0m");
+            System.out.println("\033[31m¡No existe ningún alumno con el id " + idProfesor + "!\033[0m");
             System.out.println();
             pausa();
         }
@@ -885,7 +888,7 @@ public class NotasXND {
         if (!existeProfesor(id)) {
             // Creamos la consulta
             String consulta = "update insert <profesor><id>" + id + "</id><nombre>" + nombre
-                    + "</nombre><nom_user>" + user + "</nom_user><password>" + password
+                    + "</nombre><nomUser>" + user + "</nomUser><password>" + password
                     + "</password></profesor> into //profesores";
             // Ejecutamos la consulta
             try {
