@@ -1,4 +1,5 @@
-# Proyecto de sistema de gestión de notas de Linkia
+# [DAM][M03] - Actividad 5
+## Proyecto de sistema de gestión de notas de Linkia
 
 Este documento describe el código necesario para la tercera actividad del M06, en la que se debe construir una aplicación que permita acceder a profesores y alumnos para realizar diferentes acciones relacionadas con las notas. El programa genera por defecto un usuario administrador con nombre de usuario ‘admin’ y contraseña ‘admin’. Este usuario permite acceder a la gestión de profesores y alumnos, así como a la gestión del historial de eventos.
 
